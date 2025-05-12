@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-6">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h6 class="text-primary text-uppercase mb-2">Explore Our Courses</h6>
+            <h1 class="display-6 mb-4">Learn From The Best Driving Instructors</h1>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            {% for course in courses %}
+            {% for package in course.packages.all %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 course-card">
+                        {% if course.image %}
+                            <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                            <img src="{% static 'img/default-course.jpg' %}" class="card-img-top" alt="Default Image">
+                        {% endif %}
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-primary">{{ course.title }} - {{ package.name }}</h5>
+                            <p class="text-muted small">{{ course.description|truncatewords:15 }}</p>
+                            <div class="d-flex justify-content-center mb-3">
+                                <span class="badge bg-primary me-2">₹{{ package.price }}</span>
+                                <span class="badge bg-secondary">{{ package.sessions }} Sessions</span>
+                            </div>
+                            <a href="javascript:void(0)" onclick="payNow('{{ package.id }}')" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                                <i class="fas fa-credit-card me-1"></i> Pay Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% empty %}
+                <p class="text-center">No courses available at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay Script & Payment Logic -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function payNow(packageId) {
+        const id = parseInt(packageId);
+        fetch("{% url 'students:initiate_payment' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ package: id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const options = {
+                key: data.razorpay_key,
+                amount: data.amount,
+                currency: data.currency,
+                name: "Driving School",
+                description: "Training Package Payment",
+                order_id: data.order_id,
+                handler: function (response) {
+                    fetch("{% url 'students:verify_payment' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: data.order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.status === "success") {
+                            alert("✅ Payment successful! Redirecting...");
+                            window.location.href = "{% url 'students:dashboard' %}";
+                        } else {
+                            alert("❌ Payment verification failed!");
+                        }
+                    });
+                },
+                theme: {
+                    color: "#0d6efd"
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        });
+    }
+</script>
+
+<!-- Additional CSS for Styling -->
+<style>
+    .course-card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .card-body h5 {
+        font-weight: bold;
+    }
+    .btn-outline-primary {
+        transition: 0.3s ease-in-out;
+    }
+    .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+
+{% endblock %}

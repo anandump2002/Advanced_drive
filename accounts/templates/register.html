@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Advanced Motor Driving School{% endblock %}
+
+{% block content %}
+<style>
+    .register-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-header {
+        background: linear-gradient(135deg, #007bff, #6610f2);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .register-header i {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        border-color: #6610f2;
+        box-shadow: 0 0 5px rgba(102, 16, 242, 0.5);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #007bff, #6610f2);
+        border: none;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 8px;
+        transition: 0.3s ease-in-out;
+    }
+
+    .btn-register:hover {
+        background: linear-gradient(135deg, #6610f2, #007bff);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card register-card">
+                <div class="register-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h3 class="mb-0">Student Registration</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-user"></i> First Name</label>
+                                    <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" value="{{ form.first_name.value|default:'' }}" required>
+                                    {% for error in form.first_name.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-user"></i> Last Name</label>
+                                    <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" value="{{ form.last_name.value|default:'' }}" required>
+                                    {% for error in form.last_name.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-user-circle"></i> Username</label>
+                                    <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" value="{{ form.username.value|default:'' }}" required>
+                                    {% for error in form.username.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                                    <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" value="{{ form.email.value|default:'' }}" required>
+                                    {% for error in form.email.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                                    <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" required>
+                                    {% for error in form.password1.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                    <small class="form-text text-muted">At least 8 characters, including numbers.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-lock"></i> Confirm Password</label>
+                                    <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" required>
+                                    {% for error in form.password2.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-phone"></i> Phone Number</label>
+                                    <input type="text" name="phone_number" class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}" value="{{ form.phone_number.value|default:'' }}" required>
+                                    {% for error in form.phone_number.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-users"></i> Student Type</label>
+                                    <select name="student_type" class="form-select {% if form.student_type.errors %}is-invalid{% endif %}" required>
+                                        <option value="">Select Student Type</option>
+                                        {% for value, text in form.fields.student_type.choices %}
+                                            <option value="{{ value }}" {% if form.student_type.value == value %}selected{% endif %}>{{ text }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% for error in form.student_type.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-map-marker-alt"></i> Address</label>
+                            <textarea name="address" class="form-control {% if form.address.errors %}is-invalid{% endif %}" rows="3" required>{{ form.address.value|default:'' }}</textarea>
+                            {% for error in form.address.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-register text-white d-flex justify-content-center align-items-center w-100">
+                                Register Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary fw-bold">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

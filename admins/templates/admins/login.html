@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login - Advanced Motor Driving School{% endblock %}
+
+{% block content %}
+<style>
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    padding: 3rem 1rem;
+  }
+  
+  .login-wrapper {
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .login-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  }
+  
+  .login-header {
+    background: linear-gradient(135deg, #3a7bd5 0%, #1e50a2 100%);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .login-header::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url("{% static 'images/steering-wheel-pattern.svg' %}") repeat;
+    opacity: 0.05;
+    transform: rotate(30deg);
+  }
+  
+  .login-logo {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .login-logo img {
+    width: 60px;
+    height: auto;
+  }
+  
+  .login-title {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .login-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  
+  .login-body {
+    padding: 2.5rem 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .form-control {
+    height: 54px;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border-radius: 8px;
+    border: 1px solid #e0e5ec;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f7f9fc;
+  }
+  
+  .form-control:focus {
+    background-color: #ffffff;
+    border-color: #3a7bd5;
+    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.15);
+  }
+  
+  .form-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aeb9c5;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .form-control:focus + .form-icon {
+    color: #3a7bd5;
+  }
+  
+  .form-label {
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .error-message {
+    color: #e53e3e;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .error-icon {
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
+  }
+  
+  .login-btn {
+    height: 54px;
+    background: linear-gradient(135deg, #3a7bd5 0%, #1e50a2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .login-btn:hover {
+    background: linear-gradient(135deg, #4a8bff 0%, #2563eb 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .login-btn:active {
+    transform: translateY(0);
+  }
+  
+  .login-btn-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .login-btn-icon {
+    margin-right: 0.5rem;
+  }
+  
+  .login-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .login-btn:hover::after {
+    height: 100%;
+  }
+  
+  .login-footer {
+    padding: 1.5rem 2rem;
+    background-color: #f7f9fc;
+    border-top: 1px solid #e0e5ec;
+    text-align: center;
+  }
+  
+  .register-link {
+    color: #3a7bd5;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .register-link:hover {
+    color: #1e50a2;
+    text-decoration: underline;
+  }
+  
+  .forgot-password {
+    display: block;
+    text-align: right;
+    color: #718096;
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  .forgot-password:hover {
+    color: #3a7bd5;
+  }
+  
+  .alternate-login {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+  
+  .divider {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #e0e5ec;
+  }
+  
+  .divider-text {
+    padding: 0 1rem;
+    color: #718096;
+    font-size: 0.85rem;
+  }
+  
+  .social-login {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .social-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .google-btn {
+    background-color: #ea4335;
+  }
+  
+  .facebook-btn {
+    background-color: #3b5998;
+  }
+  
+  .apple-btn {
+    background-color: #000000;
+  }
+  
+  .social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  @media (max-width: 576px) {
+    .login-header {
+      padding: 2rem 1.5rem;
+    }
+    
+    .login-body, .login-footer {
+      padding: 1.5rem;
+    }
+    
+    .login-logo {
+      width: 70px;
+      height: 70px;
+    }
+    
+    .login-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<div class="login-container">
+  <div class="login-wrapper fade-in">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">
+          <!-- Replace with your actual logo -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3a7bd5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            <path d="M12 6a9.6 9.6 0 0 1 3 7 9.6 9.6 0 0 1-3 7 9.6 9.6 0 0 1-3-7 9.6 9.6 0 0 1 3-7z"></path>
+          </svg>
+        </div>
+        <h1 class="login-title">Advanced Motor Driving School</h1>
+        <p class="login-subtitle">Sign in to access your account</p>
+      </div>
+      
+      <div class="login-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label for="id_username" class="form-label">Username</label>
+            <div class="position-relative">
+              {{ form.username }}
+              <span class="form-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
+            </div>
+            {% if form.username.errors %}
+            <div class="error-message">
+              <span class="error-icon">⚠️</span>
+              {% for error in form.username.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="id_password" class="form-label">Password</label>
+            <div class="position-relative">
+              {{ form.password }}
+              <span class="form-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </span>
+            </div>
+            {% if form.password.errors %}
+            <div class="error-message">
+              <span class="error-icon">⚠️</span>
+              {% for error in form.password.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% comment %} <a href="" class="forgot-password">Forgot password?</a> {% endcomment %}
+          </div>
+          
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="login-btn">
+              <div class="login-btn-content">
+                <span class="login-btn-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                  </svg>
+                </span>
+                Sign In
+              </div>
+            </button>
+          </div>
+        </form>
+        
+        <div class="alternate-login">
+          <div class="divider"></div>
+          <span class="divider-text">OR SIGN IN WITH</span>
+          <div class="divider"></div>
+        </div>
+        
+        <div class="social-login">
+          <a href="#" class="social-btn google-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a href="#" class="social-btn facebook-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a href="#" class="social-btn apple-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <div class="login-footer">
+        <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}" class="register-link">Sign Up Now</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

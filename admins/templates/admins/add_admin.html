@@ -1,0 +1,562 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Add New Admin{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --gradient-1: #FF416C, #FF4B2B;
+    --gradient-2: #8A2387, #E94057, #F27121;
+    --gradient-3: #12c2e9, #c471ed, #f64f59;
+  }
+
+  .admin-container {
+    max-width: 700px;
+    margin: 3rem auto;
+    perspective: 1000px;
+  }
+  
+  .admin-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 
+      0 15px 35px rgba(0, 0, 0, 0.1),
+      0 3px 10px rgba(0, 0, 0, 0.07),
+      0 0 60px rgba(138, 35, 135, 0.1);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .admin-card:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.2),
+      0 15px 20px rgba(0, 0, 0, 0.1),
+      0 0 80px rgba(138, 35, 135, 0.2);
+  }
+  
+  .admin-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg, 
+      transparent, 
+      transparent, 
+      rgba(255, 65, 108, 0.3), 
+      rgba(255, 75, 43, 0.3)
+    );
+    transform: rotate(45deg);
+    animation: sheen 10s linear infinite;
+    z-index: -1;
+  }
+  
+  @keyframes sheen {
+    0% {
+      transform: rotate(45deg) translateY(-100%);
+    }
+    50% {
+      transform: rotate(45deg) translateY(0%);
+    }
+    100% {
+      transform: rotate(45deg) translateY(100%);
+    }
+  }
+  
+  .admin-header {
+    padding: 2.5rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--gradient-2));
+    z-index: -1;
+  }
+  
+  .header-bg::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 10%,
+      transparent 40%
+    );
+    animation: pulse 15s ease-in-out infinite alternate;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.5) rotate(180deg);
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1) rotate(360deg);
+      opacity: 0.5;
+    }
+  }
+  
+  .header-title {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  .header-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    position: relative;
+  }
+  
+  .decoration-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: -1;
+  }
+  
+  .shape {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+  
+  .shape-1 {
+    width: 80px;
+    height: 80px;
+    top: -20px;
+    right: 10%;
+    animation: float 8s ease-in-out infinite;
+  }
+  
+  .shape-2 {
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 20%;
+    animation: float 6s ease-in-out infinite 1s;
+  }
+  
+  .shape-3 {
+    width: 40px;
+    height: 40px;
+    bottom: 10px;
+    left: 15%;
+    animation: float 10s ease-in-out infinite 2s;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(180deg);
+    }
+    100% {
+      transform: translateY(0) rotate(360deg);
+    }
+  }
+  
+  .admin-body {
+    padding: 2.5rem;
+    position: relative;
+  }
+  
+  .form-group {
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+  
+  .form-label::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, rgba(18, 194, 233, 0.2), rgba(196, 113, 237, 0.2));
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    transform: skew(-15deg);
+    border-radius: 2px;
+  }
+  
+  .form-control {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    background-color: rgba(249, 250, 251, 0.8);
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .form-control:focus {
+    border-color: transparent;
+    outline: none;
+    background-color: white;
+    box-shadow: 
+      0 5px 15px rgba(0, 0, 0, 0.05),
+      0 0 0 3px rgba(138, 35, 135, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .form-control:focus + .focus-border {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .focus-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    pointer-events: none;
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, var(--gradient-3));
+    border-image-slice: 1;
+    opacity: 0;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+  }
+  
+  .error-feedback {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    color: transparent;
+    background: linear-gradient(90deg, #FF416C, #FF4B2B);
+    /* -webkit-background-clip: text; */
+    padding-left: 0.5rem;
+    position: relative;
+  }
+  
+  .error-feedback::before {
+    content: '⚠️';
+    margin-right: 0.4rem;
+  }
+  
+  .admin-btn-wrapper {
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    z-index: 1;
+  }
+  
+  .admin-btn {
+    background: linear-gradient(135deg, var(--gradient-3));
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    z-index: 1;
+    box-shadow: 
+      0 10px 20px rgba(18, 194, 233, 0.15),
+      0 6px 6px rgba(196, 113, 237, 0.1),
+      0 0 100px rgba(246, 79, 89, 0.05);
+  }
+  
+  .admin-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(-135deg, var(--gradient-3));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  .admin-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+      0 15px 30px rgba(18, 194, 233, 0.2),
+      0 10px 10px rgba(196, 113, 237, 0.15);
+  }
+  
+  .admin-btn:hover::before {
+    opacity: 1;
+  }
+  
+  .admin-btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+  
+  .btn-text {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-icon {
+    margin-right: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .glow {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(18, 194, 233, 0.4);
+    filter: blur(15px);
+  }
+  
+  .glow-1 {
+    top: -10px;
+    left: 10%;
+    animation: glow-float 7s ease-in-out infinite;
+  }
+  
+  .glow-2 {
+    bottom: 20px;
+    right: 15%;
+    background: rgba(196, 113, 237, 0.4);
+    animation: glow-float 8s ease-in-out infinite 1s;
+  }
+  
+  .glow-3 {
+    bottom: -10px;
+    left: 20%;
+    background: rgba(246, 79, 89, 0.4);
+    animation: glow-float 6s ease-in-out infinite 0.5s;
+  }
+  
+  @keyframes glow-float {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(-20px) scale(1.2);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(0) scale(1);
+      opacity: 0.7;
+    }
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .back-link::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, rgba(18, 194, 233, 0.1), rgba(196, 113, 237, 0.1));
+    border-radius: 8px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: -1;
+  }
+  
+  .back-link:hover {
+    color: #8A2387;
+  }
+  
+  .back-link:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .back-icon {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+  }
+  
+  .back-link:hover .back-icon {
+    transform: translateX(-4px);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+  
+  /* Background effect */
+  .bg-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa, #e8ecf1);
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(80px);
+  }
+  
+  .bg-circle-1 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #8A2387, #E94057);
+    top: -100px;
+    right: -100px;
+    animation: bgFloat 20s ease-in-out infinite alternate;
+  }
+  
+  .bg-circle-2 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #12c2e9, #c471ed);
+    bottom: -50px;
+    left: -100px;
+    animation: bgFloat 15s ease-in-out infinite alternate-reverse;
+  }
+  
+  @keyframes bgFloat {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(100px, 50px);
+    }
+  }
+</style>
+
+<div class="bg-effect">
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+</div>
+
+<div class="admin-container fade-in">
+  <div class="admin-card">
+    <div class="admin-header">
+      <div class="header-bg">
+        <div class="decoration-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
+      </div>
+      <h2 class="header-title">Create New Administrator</h2>
+      <p class="header-subtitle">Grant privileged access to your platform</p>
+    </div>
+    
+    <div class="admin-body">
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+      <div class="glow glow-3"></div>
+      
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            <div class="focus-border"></div>
+            {% if field.errors %}
+              <div class="error-feedback">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        
+        <div class="admin-btn-wrapper">
+          <button type="submit" class="admin-btn">
+            <span class="btn-text">
+              <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+              Register Administrator
+            </span>
+          </button>
+        </div>
+      </form>
+      
+      <div class="text-center">
+        <a href="{% url 'admins:admin_dashboard' %}" class="back-link">
+          <svg class="back-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Return to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!-- admins/templates/admins/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin Dashboard</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Students</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ student_count }}</h5>
+                    <p class="card-text">Total registered students</p>
+                    <a href="{% url 'admins:manage_students' %}" class="btn btn-light">Manage Students</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Trainers</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ trainer_count }}</h5>
+                    <p class="card-text">Total active trainers</p>
+                    <a href="{% url 'admins:manage_trainers' %}" class="btn btn-light">Manage Trainers</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Vehicles</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ vehicle_count }}</h5>
+                    <p class="card-text">Total training vehicles</p>
+                    <a href="{% url 'admins:manage_vehicles' %}" class="btn btn-light">Manage Vehicles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.admin.is_primary %}
+    <div class="mt-4">
+        <a href="{% url 'admins:add_admin' %}" class="btn btn-primary">Add New Admin</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

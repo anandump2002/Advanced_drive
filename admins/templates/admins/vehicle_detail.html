@@ -1,0 +1,133 @@
+
+<!-- admins/templates/admins/vehicle_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}Vehicle Details: {{ vehicle.vehicle_number }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Vehicle Details</h1>
+        <div>
+            <a href="{% url 'admins:manage_vehicles' %}" class="btn btn-secondary">Back to Vehicles</a>
+            <a href="{% url 'admins:edit_vehicle' vehicle.id %}" class="btn btn-warning">Edit Vehicle</a>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="messages mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ vehicle.vehicle_number }} - {{ vehicle.make }} {{ vehicle.model }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Type:</strong> {{ vehicle.get_vehicle_type_display }}</p>
+                            <p><strong>Make:</strong> {{ vehicle.make }}</p>
+                            <p><strong>Model:</strong> {{ vehicle.model }}</p>
+                            <p><strong>Purchase Year:</strong> {{ vehicle.purchased_year }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if vehicle.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Seating Capacity:</strong> {{ vehicle.seating_capacity|default:"Not specified" }}</p>
+                            <p><strong>Odometer Reading:</strong> {{ vehicle.odometer_reading|default:0 }} km</p>
+                            <p><strong>Registration Expiry:</strong> 
+                                {% if vehicle.registration_expiry %}
+                                {{ vehicle.registration_expiry|date:"d M, Y" }}
+                                {% else %}
+                                Not specified
+                                {% endif %}
+                            </p>
+                            <p><strong>Insurance Expiry:</strong> 
+                                {% if vehicle.insurance_expiry %}
+                                {{ vehicle.insurance_expiry|date:"d M, Y" }}
+                                {% else %}
+                                Not specified
+                                {% endif %}
+                            </p>
+                            <p><strong>Next Service Due:</strong> 
+                                {% if vehicle.next_service_due %}
+                                {% if is_maintenance_due %}
+                                <span class="badge bg-danger">Overdue</span>
+                                {% elif days_to_maintenance <= 7 %}
+                                <span class="badge bg-warning">Due soon ({{ days_to_maintenance }} days)</span>
+                                {% else %}
+                                {{ vehicle.next_service_due|date:"d M, Y" }}
+                                {% endif %}
+                                {% else %}
+                                Not scheduled
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if vehicle.notes %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Notes:</h6>
+                            <p>{{ vehicle.notes }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Maintenance Records -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Maintenance Records</h5>
+                    <a href="{% url 'admins:add_maintenance_record' vehicle.id %}" class="btn btn-sm btn-primary">Add Record</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Odometer</th>
+                                    <th>Cost</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in maintenance_records %}
+                                <tr>
+                                    <td>{{ record.maintenance_date|date:"d M, Y" }}</td>
+                                    <td>{{ record.get_maintenance_type_display }}</td>
+                                    <td>{{ record.odometer_reading }} km</td>
+                                    <td>${{ record.cost|floatformat:2 }}</td>
+                                    <td>{{ record.description|truncatechars:50 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No maintenance records found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

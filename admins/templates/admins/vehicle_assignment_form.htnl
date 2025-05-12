@@ -1,0 +1,71 @@
+<!-- admins/templates/admins/vehicle_assignment_form.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <a href="{% url 'admins:vehicle_detail' vehicle.id %}" class="btn btn-secondary">Back to Vehicle Details</a>
+    </div>
+    
+    {% if messages %}
+    <div class="messages mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if current_assignment %}
+    <div class="alert alert-warning mt-3">
+        <strong>Note:</strong> This vehicle is currently assigned to {{ current_assignment.trainer }}. 
+        <a href="{% url 'admins:return_vehicle' current_assignment.id %}" class="alert-link">Return the vehicle</a> before assigning to a new trainer.
+    </div>
+    {% else %}
+    <div class="card mt-4">
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.trainer.id_for_label }}" class="form-label">Trainer*</label>
+                        {{ form.trainer }}
+                        {% if form.trainer.errors %}
+                        <div class="text-danger">{{ form.trainer.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.assigned_date.id_for_label }}" class="form-label">Assignment Date*</label>
+                        {{ form.assigned_date }}
+                        {% if form.assigned_date.errors %}
+                        <div class="text-danger">{{ form.assigned_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ form.purpose.id_for_label }}" class="form-label">Purpose</label>
+                        {{ form.purpose }}
+                        {% if form.purpose.errors %}
+                        <div class="text-danger">{{ form.purpose.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Reason for vehicle assignment</div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Assign Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

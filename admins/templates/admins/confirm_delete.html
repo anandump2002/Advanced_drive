@@ -1,0 +1,68 @@
+<!-- admins/templates/admins/confirm_delete.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>{{ title }}</h1>
+        <a href="{% url 'admins:manage_vehicles' %}" class="btn btn-secondary">Back to Vehicles</a>
+    </div>
+    
+    {% if messages %}
+    <div class="messages mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">Warning!</h4>
+                <p>You are about to delete the vehicle <strong>{{ vehicle.vehicle_number }} - {{ vehicle.make }} {{ vehicle.model }}</strong>.</p>
+                <p>This action cannot be undone. All associated maintenance records and assignment history will also be deleted.</p>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Vehicle Number:</strong> {{ vehicle.vehicle_number }}</p>
+                    <p><strong>Make & Model:</strong> {{ vehicle.make }} {{ vehicle.model }}</p>
+                    <p><strong>Type:</strong> {{ vehicle.get_vehicle_type_display }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Purchased Year:</strong> {{ vehicle.purchased_year }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if vehicle.is_active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                        {% endif %}
+                    </p>
+                    {% with trainer=vehicle.get_current_trainer %}
+                    <p><strong>Current Trainer:</strong> 
+                        {% if trainer %}
+                        {{ trainer }}
+                        {% else %}
+                        <span class="text-muted">Not assigned</span>
+                        {% endif %}
+                    </p>
+                    {% endwith %}
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'admins:manage_vehicles' %}" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

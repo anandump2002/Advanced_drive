@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Unassigned Training Sessions</h2>
+
+    {% if sessions %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Student</th>
+                    <th>Date</th>
+                    <th>Time Slot</th>
+                    <th>Trainer</th>
+                    <th>Vehicle</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ session.student.user.get_full_name }}</td>
+                    <td>{{ session.session_date }}</td>
+                    <td>{{ session.time_slot }}</td>
+                    <td>
+                        {% if session.trainer %}
+                            {{ session.trainer.user.get_full_name }}
+                        {% else %}
+                            <span class="text-danger">Not Assigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if session.vehicle %}
+                            {{ session.vehicle }}
+                        {% else %}
+                            <span class="text-danger">Not Assigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'trainers:assign_trainer_to_session' session.id %}" class="btn btn-sm btn-primary">
+                            Assign
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            All sessions have trainers and vehicles assigned.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
